@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="hello-mule-test-suite.xml" />
+	<munit:test name="hello-mule-test-suite-hello-muleFlowTest" doc:id="0dbdbfbb-1ca9-4bae-b285-82dfd7c0b360" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="b8d3ddfc-bea2-4e26-9ced-15770b7cf0ff" >
+				<munit:attributes value='#[{queryParams: {firstname: "john",lastname: "cena"}}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to hello-muleFlow" doc:id="b224a79a-c876-487c-b66e-ba97831958c5" name="hello-muleFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Logger" doc:id="d9de45eb-db59-4552-a5b9-279ef43d9333" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="7bc67a59-904d-4ff8-9d1a-c1e7912e2a67" expression="#[payload.message]" is='#[MunitTools::equalTo ("welcome to mule john cena")]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="hello-mule-test-suite-hello-muleFlowTest1" doc:id="a0ee1ff7-349e-42ad-93e6-18c6476851ca" description="Test" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="a76aa893-4886-4891-bd6e-592b6e351179" >
+				<munit:attributes value='#[{queryParams: {firstname: "john",lastname: "cena"}}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to hello-muleFlow" doc:id="72e3c2c0-11b8-4d6b-b7ee-d79d93c450ed" name="hello-muleFlow" />
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Logger" doc:id="7c2b07d7-c8aa-4962-9662-eef1eddd59c9" />
+			<munit-tools:assert doc:name="Assert expression" doc:id="85c18f3b-c97e-4fa5-94d9-dcec4784cb93" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must equalTo ({
+	"message" : "welcome to mule john cena"
+})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="hello-mule-test-suite-hello-muleFlowTest2" doc:id="8073e3a9-fc4f-4f3a-9b62-64782392a5fd" description="Test" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="a47dedc9-309b-4f26-9b6f-b0fcdefbdd9b" >
+				<munit:attributes value="#[readUrl('classpath://sample_data/input_attributes.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to hello-muleFlow" doc:id="5f838380-3f32-401e-8fd0-c519e9e70dee" name="hello-muleFlow" />
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Logger" doc:id="47af491f-a430-4df7-83be-b92e6be84a79" />
+			<munit-tools:assert doc:name="Assert expression" doc:id="4f67da18-e2ee-4d9b-9423-89a9afc1c3f7" message="payload doesnot match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import sample_data::hello
+---
+hello::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
